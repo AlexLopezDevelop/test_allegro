@@ -164,7 +164,7 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
     }
 
     initView(championship);
-    //trafficLight();
+    trafficLight();
 
     int seasonSpeed = (*(*championship).season).gps[currentSeason].properSpeed;
     int seasonAcceleration = (*(*championship).season).gps[currentSeason].properAcceleration;
