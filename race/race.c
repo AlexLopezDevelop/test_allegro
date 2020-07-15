@@ -282,17 +282,21 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
     // race screen
     int closeWindow = false;
     int xCirculo = 0;
-    int speedVehicle = 0;
+    int speedVehicle[8];
+
+    // clean array
+    for (int j = 0; j < 8; ++j) {
+        speedVehicle[j] = 0;
+    }
 
     while(!closeWindow) {
 
-        // Close window
-        if (LS_allegro_key_pressed(ALLEGRO_KEY_ESCAPE)) {
-            closeWindow = true;
-        }
-
         int width = 1300;
         int height = 720;
+        int aux1 = (width*0.9)-(width*0.7)*0.2;
+        int aux2 = (width*0.5)*0.1;
+        int aux3;
+
 
         al_draw_filled_rectangle(0, 0, width*0.8, height*0.9, LS_allegro_get_color(WHITE));
 
@@ -303,21 +307,31 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
 
 
         for (int i = 0; i < (totalRacers + 1); i++) {
-            speedVehicle = speedVehicle + (width*0.9)-(width*0.7)*0.2 - (width*0.5)*0.1 / racersSeconds[i]; //timepo coche (velocidad coche)
-            al_draw_filled_circle ((width*0.5)*0.1+(speedVehicle), ((height*0.9)*0.1)*(i+1), 10, LS_allegro_get_color(RED));
+            al_draw_filled_circle ((width*0.5)*0.1+(speedVehicle[i]), ((height*0.9)*0.1)*(i+1), 10, LS_allegro_get_color(RED));
         }
 
         al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),1060,670,0,"%s" "%d" "%s" "%d", "STOPS: ", racersPitStops[6], "/", (*(*championship).season).gps[currentSeason].pitStopNum);
 
         timer();
-        xCirculo += 20;
+        //xCirculo += 20;
+        for (int j = 0; j < 8; ++j) {
+            aux3 = (aux1 - aux2) / (int) racersSeconds[j];
+            speedVehicle[j] += aux3; //timepo coche (velocidad coche)
+        }
+
 
         //Draw screen
         LS_allegro_clear_and_paint(BLACK);
+
+        // Close window
+        int currentSpeed = (int) speedVehicle[7];
+        if (aux1 <= currentSpeed) { // check if my racer end the race
+            closeWindow = true;
+            break;
+        }
     }
 
     //add points
-
     racerGlobal[0].points = 25;
     racerGlobal[1].points = 18;
     racerGlobal[2].points = 15;
@@ -329,12 +343,40 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
 
     // next gps
 
-
-
     if (currentSeason < MAX_SEASON) {
         (*(*championship).season).currentCalendarPosition = currentSeason + 1;
     }
 
     (*check).season = 1;
+
+    //show stats
+    closeWindow = false;
+    int playerPosition = 0;
+
+    // get player position
+    for (int l = 0; l < sizeof(racerGlobal); ++l) {
+        if (strcmp(player->racer->name, racerGlobal[l].racer.name) == 0) {
+            playerPosition = l;
+        }
+    }
+
+    playerPosition += 1;
+
+    // user onclick keys
+    while(!closeWindow) {
+
+        // Close window
+        if (LS_allegro_key_pressed(ALLEGRO_KEY_ENTER)) {
+            closeWindow = true;
+        }
+
+
+        al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),100,40,0,"%s", player->racer->name);
+        al_draw_textf(LS_allegro_get_font(NORMAL),LS_allegro_get_color(WHITE),100,70,0,"%s %d","Ha finalizado en la posicion ", playerPosition);
+        al_draw_textf(LS_allegro_get_font(NORMAL),LS_allegro_get_color(WHITE),100,90,0,"%s","Pulsa enter para volver al menu ");
+
+        //Draw screen
+        LS_allegro_clear_and_paint(BLACK);
+    }
 
 }
