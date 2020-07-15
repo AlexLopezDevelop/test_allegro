@@ -130,6 +130,22 @@ void trafficLight() {
     }
 }
 
+void timer() {
+    float time1, time0;
+    int counter = 0;
+
+    time0 = (float) clock();
+
+    while (counter < 6) {
+        time1 = (float) clock();
+
+        if ((time1 - time0) / (float) CLOCKS_PER_SEC >= 1) {
+            counter++;
+            time0 = (float) clock();
+        }
+    }
+}
+
 int startRace(Championship * championship, Player * player, RacerGlobal * racerGlobal, Check * check) {
 
     // check if car its configured
@@ -244,38 +260,6 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
         racersSeconds[k] = racersSeconds[k] - playerSkillTime;
     }
 
-    // race screen
-    int closeWindow = false;
-
-    clock_t begin;
-    double time_spent;
-    /* Mark beginning time */
-    begin = clock();
-
-    while(!closeWindow) {
-
-        // Close window
-        if (LS_allegro_key_pressed(ALLEGRO_KEY_ESCAPE)) {
-            closeWindow = true;
-        }
-
-        int width = 1300;
-        int height = 720;
-
-        al_draw_filled_rectangle(0, 0, width*0.8, height*0.9, LS_allegro_get_color(WHITE));
-
-        for (int i = 0; i < totalRacers; i++) {
-            al_draw_line((width*0.5)*0.1, ((height*0.9)*0.1)*(i+1), (width*0.9)-(width*0.7)*0.2, ((height*0.9)*0.1)*(i+1), LS_allegro_get_color(BLACK), 5);
-            al_draw_textf(LS_allegro_get_font(LARGE), LS_allegro_get_color(WHITE), (width*0.1)*0.1, ((height*0.9)*0.1)*(i+1)-10, 0, "%d", 23);
-        }
-
-        al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),1060,670,0,"%s" "%d" "%s" "%d", "STOPS: ", racersPitStops[6], "/", (*(*championship).season[currentSeason].gps).pitStopNum);
-
-        //Draw screen
-        LS_allegro_clear_and_paint(BLACK);
-
-    }
-
     // Create time struct
     for (int i = 0; i < (totalRacers + 1); i++) {
         racerGlobal[i].racer = (*racersSeason).racer[i];
@@ -294,6 +278,42 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
         }
     }
 
+    //show race
+    // race screen
+    int closeWindow = false;
+    int xCirculo = 0;
+
+    while(!closeWindow) {
+
+        // Close window
+        if (LS_allegro_key_pressed(ALLEGRO_KEY_ESCAPE)) {
+            closeWindow = true;
+        }
+
+        int width = 1300;
+        int height = 720;
+
+        al_draw_filled_rectangle(0, 0, width*0.8, height*0.9, LS_allegro_get_color(WHITE));
+
+        for (int i = 0; i < (totalRacers + 1); i++) {
+            al_draw_line((width*0.5)*0.1, ((height*0.9)*0.1)*(i+1), (width*0.9)-(width*0.7)*0.2, ((height*0.9)*0.1)*(i+1), LS_allegro_get_color(BLACK), 5);
+            al_draw_textf(LS_allegro_get_font(LARGE), LS_allegro_get_color(WHITE), (width*0.1)*0.1, ((height*0.9)*0.1)*(i+1)-10, 0, "%d", 23);
+        }
+
+
+        for (int i = 0; i < (totalRacers + 1); i++) {
+            int speedVehicle = speedVehicle + (width*0.9)-(width*0.7)*0.2 - (width*0.5)*0.1 / racersSeconds[i]; //timepo coche (velocidad coche)
+            al_draw_filled_circle ((width*0.5)*0.1+(speedVehicle), ((height*0.9)*0.1)*(i+1), 10, LS_allegro_get_color(RED));
+        }
+
+        al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),1060,670,0,"%s" "%d" "%s" "%d", "STOPS: ", racersPitStops[6], "/", (*(*championship).season[currentSeason].gps).pitStopNum);
+
+        timer();
+        xCirculo += 20;
+
+        //Draw screen
+        LS_allegro_clear_and_paint(BLACK);
+    }
 
     //add points
 
