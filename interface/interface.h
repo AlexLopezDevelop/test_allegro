@@ -24,7 +24,7 @@
 
 void showMainMenu();
 int readOption(int * option);
-int switchOption(int * option, Racer * racer, Championship * championship, Player * player);
+int switchOption(int * option, Racer * racer, Championship * championship, Player * player, RacerGlobal * racerGlobal);
 int racerData(Racer * racer);
 
 #endif //TEST_ALLEGRO_INTERFACE_H

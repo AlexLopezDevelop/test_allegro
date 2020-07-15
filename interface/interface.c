@@ -41,7 +41,15 @@ int readOption(int * option) {
     return 0;
 }
 
-int switchOption(int * option, Racer * racer, Championship * championship, Player * player) {
+int showClassification(RacerGlobal * racerGlobal) {
+    printf("\n");
+    for (int i = 0; i < sizeof(racerGlobal); ++i) {
+
+        printf("%d. %s (%d s) - %d Puntos\n",i+1 , racerGlobal[i].racer.name, racerGlobal[i].time, racerGlobal[i].points);
+    }
+}
+
+int switchOption(int * option, Racer * racer, Championship * championship, Player * player, RacerGlobal * racerGlobal) {
 
     switch (*option) {
 
@@ -55,15 +63,15 @@ int switchOption(int * option, Racer * racer, Championship * championship, Playe
             return 0;
 
         case MENU_OPTION_2:
-            startRace(championship, player);
+            startRace(championship, player, racerGlobal);
             return 0;
 
         case MENU_OPTION_3:
-
+            showClassification(racerGlobal);
             return 0;
 
         case MENU_OPTION_4:
-
+            saveClassification(racerGlobal);
             return 0;
 
         default:
@@ -75,7 +83,7 @@ int switchOption(int * option, Racer * racer, Championship * championship, Playe
 int racerData(Racer * racer) {
 
     char userInput[MAX_CHAR];
-    bool correctInput = false;
+    int correctInput = false;
 
     // Name
     while (!correctInput) {
@@ -215,3 +223,4 @@ int racerData(Racer * racer) {
 
     return 0;
 }
+

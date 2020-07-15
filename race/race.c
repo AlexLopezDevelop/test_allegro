@@ -4,6 +4,25 @@
 
 #include "race.h"
 
+void swap(int *xp, int *yp)
+{
+    int temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+
+// A function to implement bubble sort
+void bubbleSort(int arr[], int n)
+{
+    int i, j;
+    for (i = 0; i < n-1; i++)
+
+        // Last i elements are already in place
+        for (j = 0; j < n-i-1; j++)
+            if (arr[j] > arr[j+1])
+                swap(&arr[j], &arr[j+1]);
+}
+
 void initView(Championship * championship) {
     int currentSeason = (*(*championship).season).currentCalendarPosition;
 
@@ -111,7 +130,7 @@ void trafficLight() {
     }
 }
 
-int startRace(Championship * championship, Player * player) {
+int startRace(Championship * championship, Player * player, RacerGlobal * racerGlobal) {
 
     // check if car its configured
     if (player->car->engine->name == NULL) {
@@ -120,7 +139,7 @@ int startRace(Championship * championship, Player * player) {
     }
 
     initView(championship);
-    trafficLight();
+    //trafficLight();
 
     int currentSeason = (*(*championship).season).currentCalendarPosition;
     int seasonSpeed = (*(*championship).season[currentSeason].gps).properSpeed;
@@ -133,7 +152,7 @@ int startRace(Championship * championship, Player * player) {
     Racer racer;
 
     (*racersSeason).racer = malloc(sizeof(Racer));
-    (*racersSeason).racer = realloc((*racersSeason).racer, sizeof(Racer) * totalRacers);
+    (*racersSeason).racer = realloc((*racersSeason).racer, sizeof(Racer) * (totalRacers + 1));
 
     // create racers with season data
     for (int i = 0; i < totalRacers; ++i) {
@@ -170,11 +189,11 @@ int startRace(Championship * championship, Player * player) {
     racer.tireManagement = (*(*player).racer).tireManagement;
 
     // add all players
-    (*racersSeason).racer[totalRacers + 1] = racer;
+    (*racersSeason).racer[totalRacers] = racer;
     (*racersSeason).totalRacers = totalRacers;
 
     // get seconds players
-    int *racersSeconds = racersSeconds = malloc(sizeof(int) * (*racersSeason).totalRacers);
+    float *racersSeconds = racersSeconds = malloc(sizeof(int) * (*racersSeason).totalRacers);
     float seasonSeconds = (*(*championship).season[currentSeason].gps).baseTime;
 
     for (int j = 0; j < (*racersSeason).totalRacers; ++j) {
@@ -182,23 +201,22 @@ int startRace(Championship * championship, Player * player) {
     }
 
     // get pit stop players and update time
-    int *racersPitStops = racersPitStops = malloc(sizeof(int) * (*racersSeason).totalRacers);
+    int racersPitStops[8];
     int seasonPitStops;
     int playerPitStopTime;
 
-    for (int j = 0; j < (*racersSeason).totalRacers; ++j) {
+    for (int j = 0; j < ((*racersSeason).totalRacers + 1); ++j) {
 
         seasonPitStops = (*(*championship).season[currentSeason].gps).pitStopNum;
 
-        if ((*racersSeason).racer[j].speed + (*racersSeason).racer[j].consumption <
-            (*(*championship).season[currentSeason].gps).properConsumption) {
+        if ((*racersSeason).racer[j].consumption < (*(*championship).season[currentSeason].gps).properConsumption) {
             seasonPitStops--;
         } else {
             seasonPitStops++;
         }
 
-        racersPitStops[j] = playerPitStopTime;
-        playerPitStopTime = 5 * seasonPitStops;
+        racersPitStops[j] = seasonPitStops;
+        playerPitStopTime = 5 * racersPitStops[j];
 
         // update time
         racersSeconds[j] = racersSeconds[j] + playerPitStopTime;
@@ -206,14 +224,14 @@ int startRace(Championship * championship, Player * player) {
 
     // update time with player skills
     int totalPlayerSkills;
-    int playerSkillTime;
+    float playerSkillTime;
 
-    for (int k = 0; k < (*racersSeason).totalRacers; ++k) {
+    for (int k = 0; k < ((*racersSeason).totalRacers + 1); ++k) {
 
         totalPlayerSkills = (*racersSeason).racer[k].reflexes + (*racersSeason).racer[k].physicalCondition +
                             (*racersSeason).racer[k].temperament + (*racersSeason).racer[k].tireManagement;
 
-        playerSkillTime = (totalPlayerSkills / 4) / 2;
+        playerSkillTime = (float) (totalPlayerSkills / 4) / 2;
 
         racersSeconds[k] = racersSeconds[k] - playerSkillTime;
     }
@@ -243,8 +261,41 @@ int startRace(Championship * championship, Player * player) {
             al_draw_textf(LS_allegro_get_font(LARGE), LS_allegro_get_color(WHITE), (width*0.1)*0.1, ((height*0.9)*0.1)*(i+1)-10, 0, "%d", 23);
         }
 
+        al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),1060,670,0,"%s" "%d" "%s" "%d", "STOPS: ", racersPitStops[6], "/", (*(*championship).season[currentSeason].gps).pitStopNum);
+
         //Draw screen
         LS_allegro_clear_and_paint(BLACK);
 
     }
+
+    // Create time struct
+    for (int i = 0; i < (totalRacers + 1); i++) {
+        racerGlobal[i].racer = (*racersSeason).racer[i];
+        racerGlobal[i].time = racersSeconds[i];
+    }
+
+
+    // order by time
+    for (int i = 0; i < (totalRacers + 1); ++i) {
+        for (int j = totalRacers; j > i; --j) {
+            if (racerGlobal[i].time > racerGlobal[j].time) {
+                RacerGlobal aux = racerGlobal[i];
+                racerGlobal[i] = racerGlobal[j];
+                racerGlobal[j] = aux;
+            }
+        }
+    }
+
+
+    //add points
+
+    racerGlobal[0].points = 25;
+    racerGlobal[1].points = 18;
+    racerGlobal[2].points = 15;
+    racerGlobal[3].points = 10;
+    racerGlobal[4].points = 8;
+    racerGlobal[5].points = 6;
+    racerGlobal[6].points = 5;
+    racerGlobal[7].points = 3;
+
 }

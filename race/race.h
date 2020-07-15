@@ -7,6 +7,6 @@
 
 #include "../game.h"
 
-int startRace(Championship * championship, Player * player);
+int startRace(Championship * championship, Player * player, RacerGlobal * racerGlobal);
 
 #endif //TEST_ALLEGRO_RACE_H

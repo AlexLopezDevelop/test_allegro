@@ -26,4 +26,10 @@ typedef struct {
     Racer * racer;
 }Racers;
 
+typedef struct {
+    int time;
+    int points;
+    Racer racer;
+} RacerGlobal;
+
 #endif //TEST_ALLEGRO_RACER_H

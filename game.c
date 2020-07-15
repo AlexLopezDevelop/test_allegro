@@ -9,6 +9,7 @@ void startGame(int argc, char *argv[]) {
     printf("\nBienvenidos a LS Racing!\n");
 
     // Store all pieces
+    RacerGlobal * racerGlobal = malloc(sizeof(RacerGlobal) * 8);
     Season * season = (Season *) malloc(sizeof(Season));
     Racer * racer = malloc(sizeof(Racer));
     Base base;
@@ -47,7 +48,7 @@ void startGame(int argc, char *argv[]) {
             correctInput = readOption(&option);
         }
 
-        endGame = switchOption(&option, racer, championship, player);
+        endGame = switchOption(&option, racer, championship, player, racerGlobal);
     }
 }
 

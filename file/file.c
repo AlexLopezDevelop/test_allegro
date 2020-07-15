@@ -216,3 +216,25 @@ void loadBase(char *fileName, Base * base) {
         fclose(file);
     }
 }
+
+int saveClassification(RacerGlobal * racerGlobal) {
+
+    // creating file pointer to work with files
+    FILE *file;
+
+    // opening file in writing mode
+    file = fopen("classification.txt", "w");
+
+    // exiting program
+    if (file == NULL) {
+        printf("Error!");
+        exit(1);
+    }
+
+    for (int i = 0; i < sizeof(racerGlobal); ++i) {
+        fprintf(file, "%d. %s con %d segundos.  Puntos: %d\n",i+1 , racerGlobal[i].racer.name, racerGlobal[i].time, racerGlobal[i].points);
+    }
+
+    fclose(file);
+    return 0;
+}

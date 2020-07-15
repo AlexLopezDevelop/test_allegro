@@ -13,12 +13,12 @@
 #include "../models/racer.h"
 #include "../models/base.h"
 #include <stdio.h>
-#include <stdbool.h>
 
 int checkFile(char *filename, int itsBin);
 void loadPieces(char *filename, Championship * championship);
 void loadGPs(char *fileName, Season * season);
 void loadRacers(char *filename, Championship * championship);
 void loadBase(char *fileName, Base * base);
+int saveClassification(RacerGlobal * racerGlobal);
 
 #endif //TEST_ALLEGRO_FILE_H
