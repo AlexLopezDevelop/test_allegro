@@ -158,7 +158,7 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
     // check if no more seasons
     int currentSeason = (*(*championship).season).currentCalendarPosition;
 
-    if (currentSeason >= 5) {
+    if (currentSeason >= 4) {
         printf("\nFin de Temporada\n");
         return 1;
     }
@@ -166,10 +166,10 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
     initView(championship);
     //trafficLight();
 
-    int seasonSpeed = (*(*championship).season[currentSeason].gps).properSpeed;
-    int seasonAcceleration = (*(*championship).season[currentSeason].gps).properAcceleration;
-    int seasonConsumption = (*(*championship).season[currentSeason].gps).properConsumption;
-    int seasonFlexibility = (*(*championship).season[currentSeason].gps).properFlexibility;
+    int seasonSpeed = (*(*championship).season).gps[currentSeason].properSpeed;
+    int seasonAcceleration = (*(*championship).season).gps[currentSeason].properAcceleration;
+    int seasonConsumption = (*(*championship).season).gps[currentSeason].properConsumption;
+    int seasonFlexibility = (*(*championship).season).gps[currentSeason].properFlexibility;
     int totalRacers = (*(*championship).racers).totalRacers;
 
     Racers *racersSeason = malloc(sizeof(Racers));
@@ -218,7 +218,7 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
 
     // get seconds players
     float *racersSeconds = racersSeconds = malloc(sizeof(int) * (*racersSeason).totalRacers);
-    float seasonSeconds = (*(*championship).season[currentSeason].gps).baseTime;
+    float seasonSeconds = (*(*championship).season).gps[currentSeason].baseTime;
 
     for (int j = 0; j < (*racersSeason).totalRacers; ++j) {
         racersSeconds[j] = seasonSeconds + (*racersSeason).racer[j].speed + (*racersSeason).racer[j].acceleration + (*racersSeason).racer[j].consumption + (*racersSeason).racer[j].flexibility;
@@ -231,9 +231,9 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
 
     for (int j = 0; j < ((*racersSeason).totalRacers + 1); ++j) {
 
-        seasonPitStops = (*(*championship).season[currentSeason].gps).pitStopNum;
+        seasonPitStops = (*(*championship).season).gps[currentSeason].pitStopNum;
 
-        if ((*racersSeason).racer[j].consumption < (*(*championship).season[currentSeason].gps).properConsumption) {
+        if ((*racersSeason).racer[j].consumption < (*(*championship).season).gps[currentSeason].properConsumption) {
             seasonPitStops--;
         } else {
             seasonPitStops++;
@@ -282,6 +282,7 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
     // race screen
     int closeWindow = false;
     int xCirculo = 0;
+    int speedVehicle = 0;
 
     while(!closeWindow) {
 
@@ -302,11 +303,11 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
 
 
         for (int i = 0; i < (totalRacers + 1); i++) {
-            int speedVehicle = speedVehicle + (width*0.9)-(width*0.7)*0.2 - (width*0.5)*0.1 / racersSeconds[i]; //timepo coche (velocidad coche)
+            speedVehicle = speedVehicle + (width*0.9)-(width*0.7)*0.2 - (width*0.5)*0.1 / racersSeconds[i]; //timepo coche (velocidad coche)
             al_draw_filled_circle ((width*0.5)*0.1+(speedVehicle), ((height*0.9)*0.1)*(i+1), 10, LS_allegro_get_color(RED));
         }
 
-        al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),1060,670,0,"%s" "%d" "%s" "%d", "STOPS: ", racersPitStops[6], "/", (*(*championship).season[currentSeason].gps).pitStopNum);
+        al_draw_textf(LS_allegro_get_font(LARGE),LS_allegro_get_color(WHITE),1060,670,0,"%s" "%d" "%s" "%d", "STOPS: ", racersPitStops[6], "/", (*(*championship).season).gps[currentSeason].pitStopNum);
 
         timer();
         xCirculo += 20;

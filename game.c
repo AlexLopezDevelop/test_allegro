@@ -32,6 +32,7 @@ void startGame(int argc, char *argv[]) {
     loadRacers(argv[4], championship);
 
     // init game model
+    (*championship).season = malloc(sizeof(Season));
     (*championship).season = season;
     (*championship).base = &base;
 
