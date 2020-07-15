@@ -130,18 +130,26 @@ void trafficLight() {
     }
 }
 
-int startRace(Championship * championship, Player * player, RacerGlobal * racerGlobal) {
+int startRace(Championship * championship, Player * player, RacerGlobal * racerGlobal, Check * check) {
 
     // check if car its configured
-    if (player->car->engine->name == NULL) {
+    if (check->configureCar == 0) {
         printf("\nAun no has configurado el coche\n");
+        return 1;
+    }
+
+
+    // check if no more seasons
+    int currentSeason = (*(*championship).season).currentCalendarPosition;
+
+    if (currentSeason >= 5) {
+        printf("\nFin de Temporada\n");
         return 1;
     }
 
     initView(championship);
     //trafficLight();
 
-    int currentSeason = (*(*championship).season).currentCalendarPosition;
     int seasonSpeed = (*(*championship).season[currentSeason].gps).properSpeed;
     int seasonAcceleration = (*(*championship).season[currentSeason].gps).properAcceleration;
     int seasonConsumption = (*(*championship).season[currentSeason].gps).properConsumption;
@@ -297,5 +305,15 @@ int startRace(Championship * championship, Player * player, RacerGlobal * racerG
     racerGlobal[5].points = 6;
     racerGlobal[6].points = 5;
     racerGlobal[7].points = 3;
+
+    // next gps
+
+
+
+    if (currentSeason < MAX_SEASON) {
+        (*(*championship).season).currentCalendarPosition = currentSeason + 1;
+    }
+
+    (*check).season = 1;
 
 }

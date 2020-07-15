@@ -41,7 +41,13 @@ int readOption(int * option) {
     return 0;
 }
 
-int showClassification(RacerGlobal * racerGlobal) {
+int showClassification(RacerGlobal * racerGlobal, Check * check) {
+
+    if (check->season == 0) {
+        printf("\nLa temporada aun no ha empezado\n");
+        return 1;
+    }
+
     printf("\n");
     for (int i = 0; i < sizeof(racerGlobal); ++i) {
 
@@ -49,7 +55,7 @@ int showClassification(RacerGlobal * racerGlobal) {
     }
 }
 
-int switchOption(int * option, Racer * racer, Championship * championship, Player * player, RacerGlobal * racerGlobal) {
+int switchOption(int * option, Racer * racer, Championship * championship, Player * player, RacerGlobal * racerGlobal, Check * check) {
 
     switch (*option) {
 
@@ -60,14 +66,15 @@ int switchOption(int * option, Racer * racer, Championship * championship, Playe
 
         case MENU_OPTION_1:
             configureCar(racer, championship, player);
+            (*check).configureCar = 1;
             return 0;
 
         case MENU_OPTION_2:
-            startRace(championship, player, racerGlobal);
+            startRace(championship, player, racerGlobal, check);
             return 0;
 
         case MENU_OPTION_3:
-            showClassification(racerGlobal);
+            showClassification(racerGlobal, check);
             return 0;
 
         case MENU_OPTION_4:

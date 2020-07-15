@@ -18,6 +18,7 @@
 #include "models/base.h"
 #include "models/championship.h"
 #include "models/player.h"
+#include "models/check.h"
 
 #define true 1
 #define false 0

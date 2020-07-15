@@ -21,10 +21,11 @@
 #include "../models/player.h"
 #include "../models/championship.h"
 #include "../race/race.h"
+#include "../models/check.h"
 
 void showMainMenu();
 int readOption(int * option);
-int switchOption(int * option, Racer * racer, Championship * championship, Player * player, RacerGlobal * racerGlobal);
+int switchOption(int * option, Racer * racer, Championship * championship, Player * player, RacerGlobal * racerGlobal, Check * check);
 int racerData(Racer * racer);
 
 #endif //TEST_ALLEGRO_INTERFACE_H

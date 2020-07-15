@@ -39,6 +39,11 @@ void startGame(int argc, char *argv[]) {
     int option = 0;
     int endGame = false;
 
+    // checker
+    Check * check = malloc(sizeof(Check));
+    (*check).configureCar = 0;
+    (*check).season = 0;
+
     while(!endGame){
 
         int correctInput = 0;
@@ -48,7 +53,7 @@ void startGame(int argc, char *argv[]) {
             correctInput = readOption(&option);
         }
 
-        endGame = switchOption(&option, racer, championship, player, racerGlobal);
+        endGame = switchOption(&option, racer, championship, player, racerGlobal, check);
     }
 }
 
